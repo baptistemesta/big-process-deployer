@@ -14,7 +14,6 @@ import org.bonitasoft.engine.identity.UserCreator
 import org.bonitasoft.engine.profile.ProfileMemberCreator
 import org.bonitasoft.engine.search.SearchOptionsBuilder
 import org.bonitasoft.engine.util.APITypeManager
-import java.io.File
 import java.lang.Exception
 import java.util.*
 
@@ -42,18 +41,12 @@ class App {
         }
 
         apiClient.safeExec {
-            (1..150).forEach { processNumber ->
+            (1..60).forEach { processNumber ->
                 processAPI.deployAndEnableProcess(
                         BusinessArchiveBuilder().createNewBusinessArchive().apply {
-                            addClasspathResource("org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar".toBarResource())
-                            addClasspathResource("org/hibernate/hibernate-search-engine/5.10.4.Final/hibernate-search-engine-5.10.4.Final.jar".toBarResource())
-                            addClasspathResource("org/eclipse/jdt/core/compiler/ecj/4.6.1/ecj-4.6.1.jar".toBarResource())
-                            addClasspathResource("org/apache/lucene/lucene-analyzers-common/5.5.5/lucene-analyzers-common-5.5.5.jar".toBarResource())
-                            addClasspathResource("org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar".toBarResource())
-                            addClasspathResource("org/apache/activemq/activemq-client/5.8.0/activemq-client-5.8.0.jar".toBarResource())
-                            addClasspathResource("org/apache/ant/ant/1.8.2/ant-1.8.2.jar".toBarResource())
-                            addClasspathResource("org/apache/commons/commons-collections4/4.0/commons-collections4-4.0.jar".toBarResource())
-                            addClasspathResource("org/apache/commons/commons-compress/1.18/commons-compress-1.18.jar".toBarResource())
+                            (1..50).forEach { jarNumber ->
+                                addClasspathResource(BarResource("jar$jarNumber.jar", ByteArray(1 * 1000 * 1000).apply { Random().nextBytes(this) }))
+                            }
                             setProcessDefinition(ProcessDefinitionBuilder().createNewInstance("MyProcess$processNumber", "1,0").apply {
                                 addAutomaticTask("doSomething")
                             }.done())
@@ -80,11 +73,6 @@ class App {
         createProfileMember(ProfileMemberCreator(getProfileByName(profileName)).setUserId(user.id))
     }
 
-}
-
-private fun String.toBarResource(): BarResource {
-    val jarFile = File("/Users/baptiste/.m2/repository/$this")
-    return BarResource(jarFile.name, jarFile.readBytes())
 }
 
 fun main(args: Array<String>) {
