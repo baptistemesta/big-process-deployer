@@ -26,53 +26,30 @@ class App {
         ))
         val apiClient = APIClient().apply { login("install", "install") }
 
-        val user = apiClient.safeExec {
-            identityAPI.createUser(UserCreator("walter.bates", "bpm").apply {
-                setFirstName("Walter")
-                setLastName("Bates")
-            })
-        }
+        listOf(
+                SetupOragnization(),
+                DeployBigProcesses()
+        ).forEach { it.accept(apiClient) }
 
-        apiClient.safeExec {
-            if (user != null) {
-                profileAPI.addUserToProfile(user, "Administrator")
-                profileAPI.addUserToProfile(user, "User")
-            }
-        }
-
-        apiClient.safeExec {
-            (1..60).forEach { processNumber ->
-                processAPI.deployAndEnableProcess(
-                        BusinessArchiveBuilder().createNewBusinessArchive().apply {
-                            (1..50).forEach { jarNumber ->
-                                addClasspathResource(BarResource("jar$jarNumber.jar", ByteArray(1 * 1000 * 1000).apply { Random().nextBytes(this) }))
-                            }
-                            setProcessDefinition(ProcessDefinitionBuilder().createNewInstance("MyProcess$processNumber", "1,0").apply {
-                                addAutomaticTask("doSomething")
-                            }.done())
-                        }.done()
-                )
-            }
-        }
 
     }
+}
 
-    infix fun <T> APIClient.safeExec(executable: APIClient.() -> T): T? {
-        try {
-            return this.executable()
-        } catch (e: Exception) {
-            println("Error: ${e.javaClass.name} ${e.message}")
-            return null
-        }
+
+infix fun <T> APIClient.safeExec(executable: APIClient.() -> T): T? {
+    try {
+        return this.executable()
+    } catch (e: Exception) {
+        println("Error: ${e.javaClass.name} ${e.message}")
+        return null
     }
+}
 
-    fun ProfileAPI.getProfileByName(name: String): Long =
-            searchProfiles(SearchOptionsBuilder(0, 1).filter("name", name).done()).result.first().id
+fun ProfileAPI.getProfileByName(name: String): Long =
+        searchProfiles(SearchOptionsBuilder(0, 1).filter("name", name).done()).result.first().id
 
-    fun ProfileAPI.addUserToProfile(user: User, profileName: String) {
-        createProfileMember(ProfileMemberCreator(getProfileByName(profileName)).setUserId(user.id))
-    }
-
+fun ProfileAPI.addUserToProfile(user: User, profileName: String) {
+    createProfileMember(ProfileMemberCreator(getProfileByName(profileName)).setUserId(user.id))
 }
 
 fun main(args: Array<String>) {
