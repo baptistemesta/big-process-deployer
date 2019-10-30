@@ -6,16 +6,10 @@ package org.bonitasoft.example
 import org.bonitasoft.engine.api.APIClient
 import org.bonitasoft.engine.api.ApiAccessType
 import org.bonitasoft.engine.api.ProfileAPI
-import org.bonitasoft.engine.bpm.bar.BarResource
-import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
-import org.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilder
 import org.bonitasoft.engine.identity.User
-import org.bonitasoft.engine.identity.UserCreator
 import org.bonitasoft.engine.profile.ProfileMemberCreator
 import org.bonitasoft.engine.search.SearchOptionsBuilder
 import org.bonitasoft.engine.util.APITypeManager
-import java.lang.Exception
-import java.util.*
 
 class App {
 
@@ -28,7 +22,7 @@ class App {
 
         listOf(
                 SetupOragnization(),
-                DeployBigProcesses()
+                DeployProcessesWithStartTimers()
         ).forEach { it.accept(apiClient) }
 
 
@@ -37,11 +31,11 @@ class App {
 
 
 infix fun <T> APIClient.safeExec(executable: APIClient.() -> T): T? {
-    try {
-        return this.executable()
+    return try {
+        this.executable()
     } catch (e: Exception) {
         println("Error: ${e.javaClass.name} ${e.message}")
-        return null
+        null
     }
 }
 
