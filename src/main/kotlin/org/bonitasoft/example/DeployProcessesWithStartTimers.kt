@@ -1,6 +1,8 @@
 package org.bonitasoft.example
 
 import org.bonitasoft.engine.api.APIClient
+import org.bonitasoft.engine.bpm.bar.BarResource
+import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
 import org.bonitasoft.engine.bpm.connector.ConnectorEvent
 import org.bonitasoft.engine.bpm.flownode.TimerType
 import org.bonitasoft.engine.bpm.process.DesignProcessDefinition
@@ -9,6 +11,7 @@ import org.bonitasoft.engine.expression.Expression
 import org.bonitasoft.engine.expression.ExpressionBuilder
 import org.bonitasoft.engine.expression.ExpressionConstants
 import org.bonitasoft.engine.operation.OperationBuilder
+import org.bonitasoft.example.connector.Sleep1sConnector
 import java.util.function.Consumer
 
 class DeployProcessesWithStartTimers : Consumer<APIClient> {
@@ -61,16 +64,23 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
                     }.done())
         }
         apiClient.safeExec {
-
-            processAPI.deployAndEnableProcess(ProcessDefinitionBuilder().createNewInstance("Process with 50 tasks", "1,0")
-                    .apply {
-                        addAutomaticTask("task1").apply {
-                            addMultiInstance(false, 50.toExpression())
-                            //TODO add connector
-//                            addConnector("sleep1sConnector", "sleep1sConnector", "1.0", ConnectorEvent.ON_ENTER)
-                        }
-                        addSendTask("sendMessage", "myMessage", "Receive message process".toExpression()).addMultiInstance(false, 50.toExpression())
-                    }.done())
+            val bar = BusinessArchiveBuilder().createNewBusinessArchive().apply {
+                setProcessDefinition(ProcessDefinitionBuilder().createNewInstance("Process with 50 tasks", "1,0")
+                        .apply {
+                            addAutomaticTask("task1").apply {
+                                addMultiInstance(false, 50.toExpression())
+                                addConnector("sleep1sConnector", "sleep1sConnector", "1.0", ConnectorEvent.ON_ENTER)
+                            }
+                            addSendTask("sendMessage", "myMessage", "Receive message process".toExpression()).addMultiInstance(false, 50.toExpression())
+                        }.done()
+                )
+                addConnectorImplementation(BarResource("sleep1sConnector.impl",
+                        buildConnectorImplementationFile("sleep1sConnector", "1.0", "sleep1sConnector", "1.0", Sleep1sConnector::class.java.name, listOf("sleep1sConnector.jar"))))
+                addClasspathResource(BarResource("sleep1sConnector.jar",
+                        getJar(Sleep1sConnector::class.java)
+                ))
+            }.done()
+            processAPI.deployAndEnableProcess(bar)
         }
         apiClient.safeExec {
             processAPI.deployAndEnableProcess(ProcessDefinitionBuilder().createNewInstance("Start 50 processes every 5s", "1,0")
@@ -102,9 +112,4 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
                     addTransition("startTimer", "task1")
                 }.done()
     }
-
-    private fun String.toExpression() = ExpressionBuilder().createConstantStringExpression(this)
-    private fun Int.toExpression() = ExpressionBuilder().createConstantIntegerExpression(this)
-    private fun ExpressionConstants.toExpression() = ExpressionBuilder().createEngineConstant(this)
-    private fun String.toScript(vararg dependencies: Expression) = ExpressionBuilder().createGroovyScriptExpression("aScript", this, String::class.java.name, dependencies.toList())
 }
