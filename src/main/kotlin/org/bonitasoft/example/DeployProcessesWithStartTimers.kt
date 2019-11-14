@@ -1,53 +1,25 @@
 package org.bonitasoft.example
 
 import org.bonitasoft.engine.api.APIClient
+import org.bonitasoft.engine.api.ProcessAPI
 import org.bonitasoft.engine.bpm.bar.BarResource
 import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
 import org.bonitasoft.engine.bpm.connector.ConnectorEvent
+import org.bonitasoft.engine.bpm.flownode.ActivityInstanceCriterion
 import org.bonitasoft.engine.bpm.flownode.TimerType
 import org.bonitasoft.engine.bpm.process.DesignProcessDefinition
+import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfoSearchDescriptor
 import org.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilder
-import org.bonitasoft.engine.expression.Expression
 import org.bonitasoft.engine.expression.ExpressionBuilder
 import org.bonitasoft.engine.expression.ExpressionConstants
 import org.bonitasoft.engine.operation.OperationBuilder
+import org.bonitasoft.engine.search.SearchOptionsBuilder
 import org.bonitasoft.example.connector.Sleep1sConnector
 import java.util.function.Consumer
 
 class DeployProcessesWithStartTimers : Consumer<APIClient> {
+
     override fun accept(apiClient: APIClient) {
-//        apiClient.safeExec {
-//
-//            processAPI.disableProcess(processAPI.getProcessDefinitionId("startProcessEvery10Seconds", "1,0"))
-////            processAPI.deployAndEnableProcess(processWithStartTimer("startProcessEvery10Seconds", 10))
-//        }
-//        apiClient.safeExec {
-//            processAPI.disableProcess(processAPI.getProcessDefinitionId("startProcessEvery10Seconds", "1,0"))
-////            processAPI.deployAndEnableProcess(processWithStartTimer("startProcessEvery7Seconds", 7))
-//        }
-//        apiClient.safeExec {
-//            processAPI.disableProcess(processAPI.getProcessDefinitionId("startProcessEvery6Seconds", "1,0"))
-////            processAPI.deployAndEnableProcess(processWithStartTimer("startProcessEvery6Seconds", 7))
-//        }
-//        apiClient.safeExec {
-//            processAPI.disableProcess(processAPI.getProcessDefinitionId("startProcessEvery5Seconds", "1,0"))
-////            processAPI.deployAndEnableProcess(processWithStartTimer("startProcessEvery5Seconds", 5))
-//        }
-//        apiClient.safeExec {
-//            processAPI.disableProcess(processAPI.getProcessDefinitionId("startProcessEvery2Seconds", "1,0"))
-////            processAPI.deployAndEnableProcess(processWithStartTimer("startProcessEvery2Seconds", 2))
-//        }
-//        apiClient.safeExec {
-//            processAPI.disableProcess(processAPI.getProcessDefinitionId("parallel", "1,0"))
-//            processAPI.deployAndEnableProcess(ProcessDefinitionBuilder().createNewInstance("parallel", "1,0")
-//                    .apply {
-//                        addStartEvent("startTimer")
-//                                .addTimerEventTriggerDefinition(TimerType.CYCLE, ExpressionBuilder().createConstantStringExpression("*/${4} * * * * ?"))
-//                        addAutomaticTask("task1").addMultiInstance(false, ExpressionBuilder().createConstantIntegerExpression(100))
-//                        addAutomaticTask("task2").addMultiInstance(false, ExpressionBuilder().createConstantIntegerExpression(100))
-//                        addTransition("task1", "task2")
-//                    }.done())
-//        }
         apiClient.safeExec {
             processAPI.disableProcess(processAPI.getProcessDefinitionId("Process with 50 tasks", "1,0"))
         }
@@ -83,7 +55,7 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
             processAPI.deployAndEnableProcess(bar)
         }
         apiClient.safeExec {
-            processAPI.deployAndEnableProcess(ProcessDefinitionBuilder().createNewInstance("Start 50 processes every 5s", "1,0")
+            val processDefinition = processAPI.deployAndEnableProcess(ProcessDefinitionBuilder().createNewInstance("Start 50 processes every 5s", "1,0")
                     .apply {
                         addStartEvent("startTimer")
                                 .addTimerEventTriggerDefinition(TimerType.CYCLE, "*/${5} * * * * ?".toExpression())
@@ -100,8 +72,25 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
                         addTransition("startTimer", "task1")
                     }.done())
 
+            processDefinition.getOpenTasks(processAPI).forEach {
+                println("Task ${it.name} is assigned to user with id ${it.assigneeId}")
+            }
+
+            processAPI.searchProcessDeploymentInfos(100.elements() withProcessName "Start 50 processes every 5s")
+
+            val start = 100
+            val end = 170
+            processAPI.getHumanTasks(USER_ID, start..end)
         }
     }
+
+    private fun Int.elements(): SearchOptionsBuilder = SearchOptionsBuilder(0, this)
+
+    private infix fun SearchOptionsBuilder.withProcessName(name: String) = filter(ProcessDeploymentInfoSearchDescriptor.NAME, name).done()!!
+
+    private fun ProcessAPI.getHumanTasks(userId: Long, range: IntRange) =
+            getAssignedHumanTaskInstances(userId, range.first, range.step, ActivityInstanceCriterion.DEFAULT)
+
 
     private fun processWithStartTimer(name: String, everyXSeconds: Int): DesignProcessDefinition {
         return ProcessDefinitionBuilder().createNewInstance(name, "1,0")
@@ -111,5 +100,9 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
                     addAutomaticTask("task").addLoop(true, ExpressionBuilder().createConstantBooleanExpression(true), ExpressionBuilder().createConstantIntegerExpression(100))
                     addTransition("startTimer", "task1")
                 }.done()
+    }
+
+    companion object {
+        private const val USER_ID = 117L
     }
 }

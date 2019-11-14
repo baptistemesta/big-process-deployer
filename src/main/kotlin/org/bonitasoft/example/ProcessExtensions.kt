@@ -1,8 +1,13 @@
 package org.bonitasoft.example
 
+import org.bonitasoft.engine.api.ProcessAPI
+import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance
+import org.bonitasoft.engine.bpm.flownode.HumanTaskInstanceSearchDescriptor
+import org.bonitasoft.engine.bpm.process.ProcessDefinition
 import org.bonitasoft.engine.expression.Expression
 import org.bonitasoft.engine.expression.ExpressionBuilder
 import org.bonitasoft.engine.expression.ExpressionConstants
+import org.bonitasoft.engine.search.SearchOptionsBuilder
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.util.jar.JarEntry
@@ -14,6 +19,9 @@ fun String.toExpression(): Expression = ExpressionBuilder().createConstantString
 fun Int.toExpression(): Expression = ExpressionBuilder().createConstantIntegerExpression(this)
 fun ExpressionConstants.toExpression(): Expression = ExpressionBuilder().createEngineConstant(this)
 fun String.toScript(vararg dependencies: Expression): Expression = ExpressionBuilder().createGroovyScriptExpression("aScript", this, String::class.java.name, dependencies.toList())
+
+fun ProcessDefinition.getOpenTasks(processAPI: ProcessAPI): List<HumanTaskInstance> =
+        processAPI.searchAssignedAndPendingHumanTasks(SearchOptionsBuilder(0, Int.MAX_VALUE).filter(HumanTaskInstanceSearchDescriptor.PROCESS_DEFINITION_ID, this.id).done()).result!!
 
 fun getJar(vararg classes: Class<out Any>): ByteArray {
     val map = classes.associate { c ->
