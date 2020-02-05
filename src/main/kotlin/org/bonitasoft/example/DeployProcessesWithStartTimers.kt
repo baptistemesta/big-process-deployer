@@ -1,8 +1,11 @@
 package org.bonitasoft.example
 
-import org.bonitasoft.engine.api.APIClient
+import com.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilderExt
+import com.bonitasoft.engine.api.APIClient
 import org.bonitasoft.engine.bpm.bar.BarResource
 import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
+import org.bonitasoft.engine.bpm.bar.actorMapping.Actor
+import org.bonitasoft.engine.bpm.bar.actorMapping.ActorMapping
 import org.bonitasoft.engine.bpm.connector.ConnectorEvent
 import org.bonitasoft.engine.bpm.flownode.TimerType
 import org.bonitasoft.engine.bpm.process.DesignProcessDefinition
@@ -58,10 +61,24 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
             processAPI.disableProcess(processAPI.getProcessDefinitionId("Receive message process", "1,0"))
         }
         apiClient.safeExec {
-            processAPI.deployAndEnableProcess(ProcessDefinitionBuilder().createNewInstance("Receive message process", "1,0")
+            processAPI.deployAndEnableProcess(BusinessArchiveBuilder().createNewBusinessArchive()
+                    .setActorMapping(ActorMapping().apply {
+                        addActor(Actor("theActor").apply {
+                            addUser("walter.bates")
+                        })
+                    })
+                    .setProcessDefinition(
+                            ProcessDefinitionBuilderExt().createNewInstance("Receive message process", "1,0")
                     .apply {
+                        addActor("theActor")
                         addStartEvent("start").addMessageEventTrigger("myMessage")
+                        setStringIndex(1, "string index 1", "toto".toExpression())
+                        setStringIndex(2, "string index 2", "titi".toExpression())
+                        setStringIndex(3, "string index 3", "tata".toExpression())
+                        addUserTask("userTask1", "theActor")
+                        addTransition("start", "userTask1")
                     }.done())
+                    .done())
         }
         apiClient.safeExec {
             val bar = BusinessArchiveBuilder().createNewBusinessArchive().apply {
@@ -83,13 +100,14 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
             processAPI.deployAndEnableProcess(bar)
         }
         apiClient.safeExec {
-            processAPI.deployAndEnableProcess(ProcessDefinitionBuilder().createNewInstance("Start 50 processes every 5s", "1,0")
+            val deploy = processAPI.deploy(ProcessDefinitionBuilder().createNewInstance("Start 50 processes every 5s", "1,0")
                     .apply {
+                        addParameter("instancesBySeconds", String::class.java.name)
                         addStartEvent("startTimer")
                                 .addTimerEventTriggerDefinition(TimerType.CYCLE, "*/${5} * * * * ?".toExpression())
                         addShortTextData("someText", null)
                         addAutomaticTask("task1").apply {
-                            addMultiInstance(false, 50.toExpression())
+                            addMultiInstance(false, "Integer.valueOf(instancesBySeconds)".toIntegerScript("instancesBySeconds".toParameter()))
                             addOperation(OperationBuilder().createSetDataOperation("someText", """
                                 def pId = apiAccessor.processAPI.getProcessDefinitionId("Process with 50 tasks", "1,0")
                                 apiAccessor.processAPI.startProcess(pId)
@@ -99,6 +117,8 @@ class DeployProcessesWithStartTimers : Consumer<APIClient> {
                         }
                         addTransition("startTimer", "task1")
                     }.done())
+            processAPI.updateParameterInstanceValue(deploy.id, "instancesBySeconds", "100")
+            processAPI.enableProcess(deploy.id)
 
         }
     }

@@ -1,6 +1,6 @@
 package org.bonitasoft.example
 
-import org.bonitasoft.engine.api.APIClient
+import com.bonitasoft.engine.api.APIClient
 import org.bonitasoft.engine.identity.UserCreator
 import java.util.function.Consumer
 

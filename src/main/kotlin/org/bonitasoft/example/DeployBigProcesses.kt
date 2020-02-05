@@ -1,6 +1,6 @@
 package org.bonitasoft.example
 
-import org.bonitasoft.engine.api.APIClient
+import com.bonitasoft.engine.api.APIClient
 import org.bonitasoft.engine.bpm.bar.BarResource
 import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
 import org.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilder

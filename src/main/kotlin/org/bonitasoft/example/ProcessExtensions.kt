@@ -11,9 +11,11 @@ import java.util.jar.JarOutputStream
 
 
 fun String.toExpression(): Expression = ExpressionBuilder().createConstantStringExpression(this)
+fun String.toParameter(): Expression = ExpressionBuilder().createParameterExpression(this, this, String::class.java.name)
 fun Int.toExpression(): Expression = ExpressionBuilder().createConstantIntegerExpression(this)
 fun ExpressionConstants.toExpression(): Expression = ExpressionBuilder().createEngineConstant(this)
 fun String.toScript(vararg dependencies: Expression): Expression = ExpressionBuilder().createGroovyScriptExpression("aScript", this, String::class.java.name, dependencies.toList())
+fun String.toIntegerScript(vararg dependencies: Expression): Expression = ExpressionBuilder().createGroovyScriptExpression("aScript", this, Integer::class.java.name, dependencies.toList())
 
 fun getJar(vararg classes: Class<out Any>): ByteArray {
     val map = classes.associate { c ->

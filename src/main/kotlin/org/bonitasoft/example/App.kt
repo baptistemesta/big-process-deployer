@@ -3,7 +3,7 @@
  */
 package org.bonitasoft.example
 
-import org.bonitasoft.engine.api.APIClient
+import com.bonitasoft.engine.api.APIClient
 import org.bonitasoft.engine.api.ApiAccessType
 import org.bonitasoft.engine.api.ProfileAPI
 import org.bonitasoft.engine.identity.User
