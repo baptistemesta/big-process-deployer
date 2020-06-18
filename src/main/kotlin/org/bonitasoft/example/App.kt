@@ -22,7 +22,7 @@ class App {
 
         listOf(
                 SetupOrganization(),
-                ProcessForDataExtraction()
+                DeployProcessesWithStartTimers()
         ).forEach { it.accept(apiClient) }
 
 
@@ -47,6 +47,6 @@ fun ProfileAPI.addUserToProfile(user: User, profileName: String) {
 }
 
 fun main(args: Array<String>) {
-    App().run(args.getOrElse(0) { "http://ec2-34-242-235-139.eu-west-1.compute.amazonaws.com:8080" })
+    App().run(args.getOrElse(0) { "http://localhost:8080" })
 
 }

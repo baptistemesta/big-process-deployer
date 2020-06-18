@@ -11,6 +11,7 @@ import java.util.jar.JarOutputStream
 
 
 fun String.toExpression(): Expression = ExpressionBuilder().createConstantStringExpression(this)
+fun Boolean.toExpression(): Expression = ExpressionBuilder().createConstantBooleanExpression(this)
 fun String.toParameter(): Expression = ExpressionBuilder().createParameterExpression(this, this, String::class.java.name)
 fun Int.toExpression(): Expression = ExpressionBuilder().createConstantIntegerExpression(this)
 fun ExpressionConstants.toExpression(): Expression = ExpressionBuilder().createEngineConstant(this)
