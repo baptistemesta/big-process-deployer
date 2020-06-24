@@ -7,7 +7,7 @@ import org.bonitasoft.example.toExpression
 
 class InclusiveGatewayProcess() : BonitaProcess() {
     override fun process(): ProcessDefinitionBuilder =
-            ProcessDefinitionBuilderExt().createNewInstance("Receive message process", "1,0")
+            ProcessDefinitionBuilderExt().createNewInstance("InclusiveGatewayProcess", "1,0")
                     .apply {
                         addActor("theActor")
                         addStartEvent("start")
