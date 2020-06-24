@@ -12,6 +12,7 @@ import org.bonitasoft.engine.search.SearchOptionsBuilder
 import org.bonitasoft.engine.util.APITypeManager
 import org.bonitasoft.example.processes.CallProcessXTimes
 import org.bonitasoft.example.processes.ProcessWithALotOfGateways
+import org.bonitasoft.example.processes.ProcessWithOnly1Inclusive
 import org.bonitasoft.example.processes.StartXProcessesEvery5Seconds
 
 class App {
@@ -24,8 +25,8 @@ class App {
         val apiClient = APIClient().apply { login("install", "install") }
 
         val process = ProcessWithALotOfGateways()
-        val callProcessXTimes = CallProcessXTimes(process.name, process.version, 5)
-        val startXProcessesEvery5Seconds = StartXProcessesEvery5Seconds(callProcessXTimes.name, callProcessXTimes.version, 100)
+        val callProcessXTimes = CallProcessXTimes(process.name, process.version, 20)
+        val startXProcessesEvery5Seconds = StartXProcessesEvery5Seconds(callProcessXTimes.name, callProcessXTimes.version, 200)
 
         listOf(
                 SetupOrganization(),
