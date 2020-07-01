@@ -31,6 +31,7 @@ class BasicProcess(private val number: Int) : BonitaProcess() {
             actorMapping = ActorMapping().apply {
                 addActor(Actor("theActor").apply {
                     addUser("jean.némar")
+                    addUser("walter.bates")
                 })
             }
             addClasspathResource(BarResource("jar$number.jar", ByteArray(2 * 1000 * 1000).apply { Random().nextBytes(this) }))

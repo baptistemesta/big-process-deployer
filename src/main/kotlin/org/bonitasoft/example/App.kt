@@ -25,7 +25,7 @@ class App {
         SetupOrganization().accept(apiClient)
 
         (0..1000).forEach { index ->
-            ComplexProcess(index).accept(apiClient)
+            BasicProcess(index).accept(apiClient)
         }
 
     }
