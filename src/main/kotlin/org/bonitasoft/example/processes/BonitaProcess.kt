@@ -22,10 +22,12 @@ abstract class BonitaProcess : Consumer<APIClient> {
 
     override fun accept(client: APIClient) {
         client.safeExec {
+            println("Disable process $name $version")
             processDefinitionId = processAPI.getProcessDefinitionId(name, version)
             processDefinitionId?.apply { processAPI.disableProcess(this) }
         }
         client.safeExec {
+            println("Delete process $name $version")
             processDefinitionId?.apply {
                 processAPI.deleteArchivedProcessInstances(this, 0, 1000000)
                 processAPI.deleteProcessInstances(this, 0, 1000000)
@@ -33,9 +35,11 @@ abstract class BonitaProcess : Consumer<APIClient> {
             }
         }
         client.safeExec {
+            println("Deploy process $name $version")
             processAPI.deploy(businessArchive)
         }
         client.safeExec {
+            println("Enable process $name $version")
             processAPI.getProcessDefinitionId(name, version).apply { processAPI.enableProcess(this) }
         }
     }

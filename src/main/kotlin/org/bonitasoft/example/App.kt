@@ -24,9 +24,20 @@ class App {
 
         SetupOrganization().accept(apiClient)
 
-        (0..1000).forEach { index ->
-            BasicProcess(index).accept(apiClient)
+//        val basicProcess = BasicProcess(1)
+//        basicProcess.accept(apiClient)
+//        (1..3000).forEach { index ->
+//            BasicProcess(index).accept(apiClient)
+//        }
+        val processWithBigData = ProcessThatUsesALotOfMemory(1).apply {
+            accept(apiClient)
         }
+//        val callProcessXTimes = CallProcessXTimes(processWithBigData.name, processWithBigData.version, 100).apply {
+//            accept(apiClient)
+//        }
+//        StartXProcessesEvery5Seconds(callProcessXTimes.name, callProcessXTimes.version, 1).apply {
+//            accept(apiClient)
+//        }
 
     }
 }
@@ -49,6 +60,6 @@ fun ProfileAPI.addUserToProfile(user: User, profileName: String) {
 }
 
 fun main(args: Array<String>) {
-    App().run(args.getOrElse(0) { "http://localhost:8080" })
+    App().run(args.getOrElse(0) { "http://ec2-3-249-234-119.eu-west-1.compute.amazonaws.com:8080" })
 
 }

@@ -12,7 +12,7 @@ import org.bonitasoft.example.toScript
 
 class StartXProcessesEvery5Seconds(private val targetProcessName: String, private val targetProcessVersion: String, private val instances: Int) : BonitaProcess() {
     override fun process(): ProcessDefinitionBuilder =
-            ProcessDefinitionBuilder().createNewInstance("StartXProcessesEvery5Seconds", "1,0")
+            ProcessDefinitionBuilder().createNewInstance("StartXProcessesEvery5Seconds", "1.1")
                     .apply {
                         addParameter("instances", String::class.java.name)
                         addStartEvent("startTimer")
