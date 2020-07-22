@@ -36,11 +36,11 @@ abstract class BonitaProcess : Consumer<APIClient> {
         }
         client.safeExec {
             println("Deploy process $name $version")
-            processAPI.deploy(businessArchive)
+            processDefinitionId = processAPI.deploy(businessArchive).id
         }
         client.safeExec {
             println("Enable process $name $version")
-            processAPI.getProcessDefinitionId(name, version).apply { processAPI.enableProcess(this) }
+            processAPI.enableProcess(processDefinitionId!!)
         }
     }
 
