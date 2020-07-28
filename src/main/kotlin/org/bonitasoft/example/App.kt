@@ -24,15 +24,10 @@ class App {
 
         SetupOrganization().accept(apiClient)
 
-//        val basicProcess = BasicProcess(1)
-//        basicProcess.accept(apiClient)
-//        (1..3000).forEach { index ->
-//            BasicProcess(index).accept(apiClient)
-//        }
-//        val processWithBigData = ProcessThatUsesALotOfMemory(1).apply {
-//            accept(apiClient)
-//        }
-        val process = ProcessWithALotOfGateways().apply {
+        val calledProcess = ProcessWith2AutomaticTasks().apply {
+            accept(apiClient)
+        }
+        val process = ProcessWithCallActivityAborted(calledProcess.name, calledProcess.version).apply {
             accept(apiClient)
         }
         val callProcessXTimes = StartXProcesses(process.name, process.version, 200).apply {
