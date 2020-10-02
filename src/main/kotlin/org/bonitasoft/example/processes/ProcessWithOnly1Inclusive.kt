@@ -1,12 +1,11 @@
 package org.bonitasoft.example.processes
 
-import com.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilderExt
 import org.bonitasoft.engine.bpm.flownode.GatewayType
 import org.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilder
 
 class ProcessWithOnly1Inclusive : BonitaProcess() {
     override fun process(): ProcessDefinitionBuilder =
-            ProcessDefinitionBuilderExt().createNewInstance("ProcessWithOnly1Inclusive", "1,0")
+            ProcessDefinitionBuilder().createNewInstance("ProcessWithOnly1Inclusive", "1,0")
                     .apply {
 
                         addAutomaticTask("auto1")

@@ -1,7 +1,7 @@
 package org.bonitasoft.example
 
-import com.bonitasoft.engine.api.APIClient
-import com.bonitasoft.engine.bpm.bar.BusinessArchiveFactory
+import org.bonitasoft.engine.api.APIClient
+import org.bonitasoft.engine.bpm.bar.BusinessArchiveFactory
 import org.bonitasoft.engine.bpm.bar.BusinessArchive
 import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
 import org.bonitasoft.engine.bpm.bar.actorMapping.Actor

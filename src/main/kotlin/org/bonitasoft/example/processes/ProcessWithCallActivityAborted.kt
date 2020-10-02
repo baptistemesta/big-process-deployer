@@ -1,6 +1,5 @@
 package org.bonitasoft.example.processes
 
-import com.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilderExt
 import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
 import org.bonitasoft.engine.bpm.bar.actorMapping.Actor
 import org.bonitasoft.engine.bpm.bar.actorMapping.ActorMapping
@@ -10,7 +9,7 @@ import org.bonitasoft.example.toExpression
 class ProcessWithCallActivityAborted(private val processName: String, private val processVersion: String) : BonitaProcess() {
 
     override fun process(): ProcessDefinitionBuilder {
-        return ProcessDefinitionBuilderExt().createNewInstance("ProcessWithCallActivityAborted", processVersion)
+        return ProcessDefinitionBuilder().createNewInstance("ProcessWithCallActivityAborted", processVersion)
                 .apply {
                     addActor("theActor", true)
                     addStartEvent("start")

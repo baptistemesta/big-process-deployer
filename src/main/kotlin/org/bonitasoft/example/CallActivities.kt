@@ -1,8 +1,7 @@
 package org.bonitasoft.example
 
-import com.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilderExt
-import com.bonitasoft.engine.api.APIClient
-import com.bonitasoft.engine.bpm.bar.BusinessArchiveFactory
+import org.bonitasoft.engine.api.APIClient
+import org.bonitasoft.engine.bpm.bar.BusinessArchiveFactory
 import org.bonitasoft.engine.bpm.bar.BarResource
 import org.bonitasoft.engine.bpm.bar.BusinessArchive
 import org.bonitasoft.engine.bpm.bar.BusinessArchiveBuilder
@@ -54,7 +53,7 @@ class CallActivities : Consumer<APIClient> {
                     })
                 })
                 .setProcessDefinition(
-                        ProcessDefinitionBuilderExt().createNewInstance("CalledProcess", "1.0")
+                        ProcessDefinitionBuilder().createNewInstance("CalledProcess", "1.0")
                                 .apply {
                                     addActor("theActor", true)
                                     addAutomaticTask("sub1")
@@ -70,7 +69,7 @@ class CallActivities : Consumer<APIClient> {
                     })
                 })
                 .setProcessDefinition(
-                        ProcessDefinitionBuilderExt().createNewInstance("CallingProcess", "1.0")
+                        ProcessDefinitionBuilder().createNewInstance("CallingProcess", "1.0")
                                 .apply {
                                     addActor("theActor", true)
                                     addStartEvent("start")

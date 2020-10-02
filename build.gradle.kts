@@ -25,7 +25,7 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     
-    implementation("com.bonitasoft.engine:bonita-client-sp:7.10.0")
+    implementation("org.bonitasoft.engine:bonita-client:7.10.5")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")

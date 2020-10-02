@@ -1,13 +1,12 @@
 package org.bonitasoft.example.processes
 
-import com.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilderExt
 import org.bonitasoft.engine.bpm.flownode.GatewayType
 import org.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilder
 import org.bonitasoft.example.toExpression
 
 class ProcessWithALotOfGateways : BonitaProcess() {
     override fun process(): ProcessDefinitionBuilder =
-            ProcessDefinitionBuilderExt().createNewInstance("ProcessWithALotOfGateways", "1,0")
+            ProcessDefinitionBuilder().createNewInstance("ProcessWithALotOfGateways", "1,0")
                     .apply {
                         addStartEvent("start")
                         addGateway("para1", GatewayType.PARALLEL)
