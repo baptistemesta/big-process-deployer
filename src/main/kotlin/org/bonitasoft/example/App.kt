@@ -33,10 +33,6 @@ class App {
         val callProcessXTimes = StartXProcesses(process.name, process.version, 200).apply {
             accept(apiClient)
         }
-//        StartXProcessesEvery5Seconds(callProcessXTimes.name, callProcessXTimes.version, 1).apply {
-//            accept(apiClient)
-//        }
-
     }
 }
 
