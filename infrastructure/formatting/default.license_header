@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bonitasoft S.A.
+ * Copyright $YEAR Bonitasoft S.A.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,25 +12,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bonitasoft.example.connector
-
-import org.bonitasoft.engine.connector.Connector
-
-public class Sleep1sConnector : Connector {
-    override fun validateInputParameters() {
-    }
-
-    override fun disconnect() {
-    }
-
-    override fun connect() {
-    }
-
-    override fun setInputParameters(parameters: MutableMap<String, Any>?) {
-    }
-
-    override fun execute(): MutableMap<String, Any> {
-        Thread.sleep(1000)
-        return mutableMapOf()
-    }
-}

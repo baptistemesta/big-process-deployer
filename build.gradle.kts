@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.3.21")
+    id("com.bonitasoft.gradle.bonita-formatting").version("0.1.53")
     application
 }
 
